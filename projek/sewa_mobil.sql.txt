@@ -1,0 +1,48 @@
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    profile_picture VARCHAR(255) DEFAULT 'default_profile.png',
+    role ENUM('admin', 'user') DEFAULT 'user'
+);
+
+CREATE TABLE `cars` (
+    `id` INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `make` VARCHAR(255) NOT NULL,
+    `model` VARCHAR(255) NOT NULL,
+    `year` INT(4) NOT NULL,                -- Tahun mobil
+    `plate_number` VARCHAR(20) NOT NULL,    -- Nomor plat mobil
+    `image_url` VARCHAR(255) DEFAULT NULL,  -- URL gambar mobil
+    `available` BOOLEAN DEFAULT TRUE,       -- Status ketersediaan mobil (TRUE = available, FALSE = not available)
+    `price_per_day` DECIMAL(10, 2) NOT NULL, -- Harga sewa per hari
+    `price_per_12_hours` DECIMAL(10, 2) NOT NULL,  -- Harga sewa per 12 jam
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+CREATE TABLE `bookings` (
+    `id` INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `user_id` INT(11) NOT NULL,
+    `car_id` INT(11) NOT NULL,
+    `start_date` DATETIME NOT NULL,
+    `end_date` DATETIME NOT NULL,
+    `total_price` DECIMAL(10, 2) NOT NULL,
+    `status` ENUM('Pending', 'Confirmed', 'Cancelled') DEFAULT 'Pending',
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE,
+    FOREIGN KEY (`car_id`) REFERENCES `cars`(`id`) ON DELETE CASCADE
+);
+
+CREATE TABLE transactions (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    booking_id INT NOT NULL,
+    car_id INT NOT NULL,
+    total_price DECIMAL(10, 2) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (booking_id) REFERENCES bookings(id) ON DELETE CASCADE,
+    FOREIGN KEY (car_id) REFERENCES cars(id) ON DELETE CASCADE
+);
+
+
